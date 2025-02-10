@@ -1,41 +1,27 @@
 {
   "expo": {
-    "name": "ProgrammingTutorialPlatform",
-    "slug": "ProgrammingTutorialPlatform",
+    "name": "ProgrammingTP2", // Chose remote name
+    "slug": "ProgrammingTP2",  // Chose remote slug
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/icon.png", // Kept remote icon path
     "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light", // Chose remote userInterfaceStyle
     "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+      "foregroundImage": "./assets/adaptive-icon.png", // Chose remote path
+      "backgroundColor": "#ffffff"
     },
     "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
-    },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        }
-      ]
-    ],
-    "experiments": {
-      "typedRoutes": true
+      "favicon": "./assets/favicon.png" // Chose remote favicon path
     }
   }
 }
