@@ -48,7 +48,15 @@ function greet() {
 
   return (
 
-    <View style={styles.container}>
+    <View style={(StyleSheet.create({
+      container: {
+        flex: 1,
+      },
+
+      webview: {
+        flex: 1,
+      },
+    })).container}>
 
       <WebView
 
@@ -56,7 +64,15 @@ function greet() {
 
         source={{ html: htmlContent }}
 
-        style={styles.webview}
+        style={(StyleSheet.create({
+          container: {
+            flex: 1,
+          },
+
+          webview: {
+            flex: 1,
+          },
+        })).webview}
 
       />
 
@@ -66,21 +82,6 @@ function greet() {
 
 }
 
-const styles = StyleSheet.create({
-
-  container: {
-
-    flex: 1,
-
-  },
-
-  webview: {
-
-    flex: 1,
-
-  },
-
-});
 
 
 import { Button } from 'react-native';
@@ -104,7 +105,15 @@ import { Button } from 'react-native';
 import { javascriptQuizzes } from '../data/quizzes';
 
 
-<View style={styles.buttonContainer}>
+<View style={(StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+
+  webview: {
+    flex: 1,
+  },
+})).buttonContainer}>
 
 <Button
 
@@ -147,3 +156,92 @@ marginVertical; 15,
 paddingHorizontal; 20,
 
 };
+
+import { View, Text, StyleSheet, Button } from 'react-native';
+import { WebView } from 'react-native-webview';
+import { javascriptQuizzes, pythonQuizzes } from '../data/quizzes';
+import { javascriptExercises, pythonExercises } from '../data/exercises';
+
+export default function TutorialDetailScreen({ route, navigation }) {
+  const { tutorial } = route.params;
+
+  // Get quizzes and exercises based on the tutorial category
+  const quizzes = tutorial.category === 'JavaScript' ? javascriptQuizzes : pythonQuizzes;
+  const exercises = tutorial.category === 'JavaScript' ? javascriptExercises : pythonExercises;
+
+  const htmlContent = `
+    <html>
+      <head>
+        <style>
+          body { font-family: sans-serif; padding: 20px; }
+          h1 { color: #2c3e50; }
+          pre { background: #f4f4f4; padding: 10px; border-radius: 5px; }
+        </style>
+      </head>
+      <body>
+        <h1>${tutorial.title}</h1>
+        <p>Welcome to the ${tutorial.category} tutorial!</p>
+      </body>
+    </html>
+  `;
+
+  return (
+    <View style={(StyleSheet.create({
+      container: {
+        flex: 1,
+      },
+
+      webview: {
+        flex: 1,
+      },
+    })).container}>
+      <View style={(StyleSheet.create({
+        container: {
+          flex: 1,
+        },
+
+        webview: {
+          flex: 1,
+        },
+      })).buttonContainer}>
+        <Button
+          title="Start Quiz"
+          color="#2196F3"
+          onPress={() => navigation.navigate('Quiz', { quiz: quizzes[0] })}
+        />
+        <Button
+          title="Practice Exercise"
+          color="#4CAF50"
+          onPress={() => navigation.navigate('Exercise', { exercise: exercises[0] })}
+        />
+      </View>
+      <WebView
+        originWhitelist={['*']}
+        source={{ html: htmlContent }}
+        style={(StyleSheet.create({
+          container: {
+            flex: 1,
+          },
+
+          webview: {
+            flex: 1,
+          },
+        })).webview}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  buttonContainer: {
+    gap: 10,
+    marginVertical: 15,
+    paddingHorizontal: 20,
+  },
+  webview: {
+    flex: 1,
+  },
+});

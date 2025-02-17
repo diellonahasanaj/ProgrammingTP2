@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "ProgrammingTP2", // Chose remote name
-    "slug": "ProgrammingTP2",  // Chose remote slug
+    "name": "ProgrammingTP2", 
+    "slug": "ProgrammingTP2",  
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png", // Kept remote icon path
+    "icon": "./assets/icon.png", 
     "scheme": "myapp",
-    "userInterfaceStyle": "light", // Chose remote userInterfaceStyle
+    "userInterfaceStyle": "light", 
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -17,11 +17,12 @@
       "supportsTablet": true
     },
     "android": {
-      "foregroundImage": "./assets/adaptive-icon.png", // Chose remote path
+      "foregroundImage": "./assets/adaptive-icon.png", 
       "backgroundColor": "#ffffff"
     },
     "web": {
-      "favicon": "./assets/favicon.png" // Chose remote favicon path
+      "favicon": "./assets/favicon.png" 
     }
   }
 }
+
