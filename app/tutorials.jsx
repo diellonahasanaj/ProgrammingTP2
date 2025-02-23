@@ -8,28 +8,150 @@ import {
   Button,
   TouchableOpacity,
 } from "react-native";
-import { ProgressBar } from "./ProgressBar"; // Import the ProgressBar component
 
-// Define TypeScript interfaces
-interface Topic {
-  id: string;
-  title: string;
-  content: string;
-}
+// ProgressBar Component
+const ProgressBar = ({ progress }) => {
+  return (
+    <View style={styles.progressBarContainer}>
+      <View style={styles.progressBar}>
+        <View style={[styles.progressFill, { width: `${progress}%` }]} />
+      </View>
+      <Text style={styles.progressText}>{Math.round(progress)}% Completed</Text>
+    </View>
+  );
+};
 
-interface Quiz {
-  topicId: string;
-  question: string;
-  options: string[];
-  answer: string;
-}
+// TopicItem Component
+const TopicItem = ({
+  topic,
+  isSelected,
+  isCompleted,
+  onSelect,
+  onMarkAsComplete,
+}) => {
+  return (
+    <View>
+      <TouchableOpacity
+        style={[styles.topicItem, isSelected && styles.selectedTopicItem]}
+        onPress={() => onSelect(topic.id)}
+      >
+        <Text style={styles.topicTitle}>{topic.title}</Text>
+        {isCompleted && <Text style={styles.completedText}>✔ Completed</Text>}
+      </TouchableOpacity>
 
-interface Progress {
-  [key: string]: boolean;
-}
+      {isSelected && (
+        <View style={styles.topicContent}>
+          <Text style={styles.topicText}>{topic.content}</Text>
+          <Button
+            title="Mark as Complete"
+            onPress={() => onMarkAsComplete(topic.id)}
+          />
+        </View>
+      )}
+    </View>
+  );
+};
 
-// Topics data
-const topics: Topic[] = [
+// QuizItem Component
+const QuizItem = ({ quiz }) => {
+  const [quizAnswer, setQuizAnswer] = useState(null);
+
+  return (
+    <View style={styles.quizItem}>
+      <Text style={styles.quizQuestion}>{quiz.question}</Text>
+      {quiz.options.map((option, i) => (
+        <TouchableOpacity
+          key={i}
+          style={[
+            styles.quizOption,
+            quizAnswer === option && styles.selectedQuizOption,
+          ]}
+          onPress={() => setQuizAnswer(option)}
+        >
+          <Text>{option}</Text>
+          {quizAnswer === option && (
+            <Text style={styles.quizFeedback}>
+              {option === quiz.answer ? "✅ Correct!" : "❌ Incorrect"}
+            </Text>
+          )}
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+};
+
+// Main TutorialsScreen Component
+const TutorialsScreen = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTopic, setSelectedTopic] = useState(null);
+  const [progress, setProgress] = useState({});
+
+  // Calculate progress percentage
+  const totalTopics = topics.length;
+  const completedTopics = Object.values(progress).filter(Boolean).length;
+  const progressPercentage = (completedTopics / totalTopics) * 100;
+
+  // Event handlers
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+
+  const handleTopicSelect = (topicId) => {
+    setSelectedTopic(selectedTopic === topicId ? null : topicId);
+  };
+
+  const handleMarkAsComplete = (topicId) => {
+    setProgress((prev) => ({ ...prev, [topicId]: true }));
+  };
+
+  // Filtered topics based on search query
+  const filteredTopics = topics.filter((topic) =>
+    topic.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* Progress Tracker */}
+      <ProgressBar progress={progressPercentage} />
+
+      {/* Search Bar */}
+      <TextInput
+        style={styles.searchBar}
+        placeholder="Search tutorials..."
+        value={searchQuery}
+        onChangeText={handleSearch}
+      />
+
+      {/* Tutorial Topics List */}
+      <Text style={styles.sectionTitle}>Tutorial Topics</Text>
+      {filteredTopics.map((topic) => (
+        <TopicItem
+          key={topic.id}
+          topic={topic}
+          isSelected={selectedTopic === topic.id}
+          isCompleted={!!progress[topic.id]}
+          onSelect={handleTopicSelect}
+          onMarkAsComplete={handleMarkAsComplete}
+        />
+      ))}
+
+      {/* Quiz Section */}
+      {selectedTopic && (
+        <View style={styles.quizContainer}>
+          <Text style={styles.sectionTitle}>Quiz</Text>
+          {quizzes
+            .filter((quiz) => quiz.topicId === selectedTopic)
+            .map((quiz, index) => (
+              <QuizItem key={index} quiz={quiz} />
+            ))}
+        </View>
+      )}
+    </ScrollView>
+  );
+};
+
+// Topics Data
+const topics = [
   {
     id: "1",
     title: "Introduction to JavaScript",
@@ -211,8 +333,8 @@ SELECT name, age FROM users WHERE age > 18;
   },
 ];
 
-// Quizzes data
-const quizzes: Quiz[] = [
+// Quizzes Data
+const quizzes = [
   {
     topicId: "1",
     question: "What is JavaScript primarily used for?",
@@ -339,117 +461,29 @@ const quizzes: Quiz[] = [
   },
 ];
 
-export default function TutorialsScreen() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
-  const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
-  const [progress, setProgress] = useState<Progress>({});
-
-  // Calculate progress percentage
-  const totalTopics = topics.length;
-  const completedTopics = Object.values(progress).filter(Boolean).length;
-  const progressPercentage = (completedTopics / totalTopics) * 100;
-
-  // Event handlers
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-  };
-
-  const handleTopicSelect = (topicId: string) => {
-    setSelectedTopic(selectedTopic === topicId ? null : topicId);
-    setQuizAnswer(null);
-  };
-
-  const handleMarkAsComplete = (topicId: string) => {
-    setProgress((prev) => ({ ...prev, [topicId]: true }));
-  };
-
-  // Filtered topics based on search query
-  const filteredTopics = topics.filter((topic) =>
-    topic.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* Progress Tracker */}
-      <ProgressBar progress={progressPercentage} />
-
-      {/* Search Bar */}
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Search tutorials..."
-        value={searchQuery}
-        onChangeText={handleSearch}
-      />
-
-      {/* Tutorial Topics List */}
-      <Text style={styles.sectionTitle}>Tutorial Topics</Text>
-      {filteredTopics.map((topic) => (
-        <View key={topic.id}>
-          {/* Topic Title */}
-          <TouchableOpacity
-            style={[
-              styles.topicItem,
-              selectedTopic === topic.id && styles.selectedTopicItem,
-            ]}
-            onPress={() => handleTopicSelect(topic.id)}
-          >
-            <Text style={styles.topicTitle}>{topic.title}</Text>
-            {progress[topic.id] && (
-              <Text style={styles.completedText}>✔ Completed</Text>
-            )}
-          </TouchableOpacity>
-
-          {/* Topic Content (rendered inline if selected) */}
-          {selectedTopic === topic.id && (
-            <View style={styles.topicContent}>
-              <Text style={styles.topicText}>{topic.content}</Text>
-              <Button
-                title="Mark as Complete"
-                onPress={() => handleMarkAsComplete(topic.id)}
-              />
-
-              {/* Quiz Section */}
-              <View style={styles.quizContainer}>
-                <Text style={styles.sectionTitle}>Quiz</Text>
-                {quizzes
-                  .filter((quiz) => quiz.topicId === topic.id)
-                  .map((quiz, index) => (
-                    <View key={index} style={styles.quizItem}>
-                      <Text style={styles.quizQuestion}>{quiz.question}</Text>
-                      {quiz.options.map((option, i) => (
-                        <TouchableOpacity
-                          key={i}
-                          style={[
-                            styles.quizOption,
-                            quizAnswer === option && styles.selectedQuizOption,
-                          ]}
-                          onPress={() => setQuizAnswer(option)}
-                        >
-                          <Text>{option}</Text>
-                          {quizAnswer === option && (
-                            <Text style={styles.quizFeedback}>
-                              {option === quiz.answer ? "✅ Correct!" : "❌ Incorrect"}
-                            </Text>
-                          )}
-                        </TouchableOpacity>
-                      ))}
-                    </View>
-                  ))}
-              </View>
-            </View>
-          )}
-        </View>
-      ))}
-    </ScrollView>
-  );
-}
-
 // Styles
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 24,
+  },
+  progressBarContainer: {
+    marginBottom: 20,
+  },
+  progressBar: {
+    height: 10,
+    backgroundColor: "#e0e0e0",
+    borderRadius: 5,
+    overflow: "hidden",
+  },
+  progressFill: {
+    height: "100%",
+    backgroundColor: "#3498db",
+  },
+  progressText: {
+    marginTop: 5,
+    fontSize: 14,
+    color: "#2c3e50",
   },
   searchBar: {
     height: 40,
@@ -524,6 +558,8 @@ const styles = StyleSheet.create({
   quizFeedback: {
     marginTop: 5,
     fontWeight: "bold",
-    color: "#27ae60", // Green for correct, red for incorrect
+    color: "#27ae60",
   },
 });
+
+export default TutorialsScreen;

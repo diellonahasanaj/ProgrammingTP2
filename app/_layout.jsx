@@ -31,17 +31,6 @@ export default function Layout() {
         }}
       />
 
-      {/* Code Editor Screen */}
-      <Tabs.Screen
-        name="code_Editor"
-        options={{
-          title: "Code Editor",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="code" size={size} color={color} />
-          ),
-        }}
-      />
-
     </Tabs>
   );
 } 
