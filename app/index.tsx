@@ -106,4 +106,4 @@ const styles = StyleSheet.create({
     color: "white",
     lineHeight: 20,
   },
-});
+}); 
