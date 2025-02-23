@@ -21,6 +21,34 @@ const ProgressBar = ({ progress }) => {
   );
 };
 
+// QuizItem Component
+const QuizItem = ({ quiz }) => {
+  const [quizAnswer, setQuizAnswer] = useState(null);
+
+  return (
+    <View style={styles.quizItem}>
+      <Text style={styles.quizQuestion}>{quiz.question}</Text>
+      {quiz.options.map((option, i) => (
+        <TouchableOpacity
+          key={i}
+          style={[
+            styles.quizOption,
+            quizAnswer === option && styles.selectedQuizOption,
+          ]}
+          onPress={() => setQuizAnswer(option)}
+        >
+          <Text>{option}</Text>
+          {quizAnswer === option && (
+            <Text style={styles.quizFeedback}>
+              {option === quiz.answer ? "✅ Correct!" : "❌ Incorrect"}
+            </Text>
+          )}
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+};
+
 // TopicItem Component
 const TopicItem = ({
   topic,
@@ -46,36 +74,16 @@ const TopicItem = ({
             title="Mark as Complete"
             onPress={() => onMarkAsComplete(topic.id)}
           />
+
+          {/* Quizzes for the selected topic */}
+          <Text style={styles.sectionTitle}>Quiz</Text>
+          {quizzes
+            .filter((quiz) => quiz.topicId === topic.id)
+            .map((quiz, index) => (
+              <QuizItem key={index} quiz={quiz} />
+            ))}
         </View>
       )}
-    </View>
-  );
-};
-
-// QuizItem Component
-const QuizItem = ({ quiz }) => {
-  const [quizAnswer, setQuizAnswer] = useState(null);
-
-  return (
-    <View style={styles.quizItem}>
-      <Text style={styles.quizQuestion}>{quiz.question}</Text>
-      {quiz.options.map((option, i) => (
-        <TouchableOpacity
-          key={i}
-          style={[
-            styles.quizOption,
-            quizAnswer === option && styles.selectedQuizOption,
-          ]}
-          onPress={() => setQuizAnswer(option)}
-        >
-          <Text>{option}</Text>
-          {quizAnswer === option && (
-            <Text style={styles.quizFeedback}>
-              {option === quiz.answer ? "✅ Correct!" : "❌ Incorrect"}
-            </Text>
-          )}
-        </TouchableOpacity>
-      ))}
     </View>
   );
 };
@@ -134,18 +142,6 @@ const TutorialsScreen = () => {
           onMarkAsComplete={handleMarkAsComplete}
         />
       ))}
-
-      {/* Quiz Section */}
-      {selectedTopic && (
-        <View style={styles.quizContainer}>
-          <Text style={styles.sectionTitle}>Quiz</Text>
-          {quizzes
-            .filter((quiz) => quiz.topicId === selectedTopic)
-            .map((quiz, index) => (
-              <QuizItem key={index} quiz={quiz} />
-            ))}
-        </View>
-      )}
     </ScrollView>
   );
 };
