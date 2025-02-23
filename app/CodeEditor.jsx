@@ -41,12 +41,28 @@ const CodeEditor = () => {
     setIsDarkTheme(!isDarkTheme);
   };
 
+  // Check syntax for basic errors
+  const checkSyntax = () => {
+    const errors = [];
+    if (!code.includes(";")) {
+      errors.push("Missing semicolon.");
+    }
+    if (errors.length > 0) {
+      setOutput(`Syntax Errors:\n${errors.join("\n")}`);
+    } else {
+      setOutput("No syntax errors found.");
+    }
+  };
+
   return (
     <View style={[styles.container, isDarkTheme && styles.darkContainer]}>
       {/* Toolbar */}
       <View style={styles.toolbar}>
         <TouchableOpacity style={styles.toolbarButton} onPress={evaluateCode}>
           <Text style={styles.toolbarButtonText}>Run</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.toolbarButton} onPress={checkSyntax}>
+          <Text style={styles.toolbarButtonText}>Check Syntax</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.toolbarButton} onPress={clearEditor}>
           <Text style={styles.toolbarButtonText}>Clear</Text>
